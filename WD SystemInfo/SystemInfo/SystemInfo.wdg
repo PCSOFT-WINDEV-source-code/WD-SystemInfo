@@ -1,0 +1,304 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : SystemInfo
+ major_version : 28
+ minor_version : 0
+ type : 7
+ description : ""
+ subtype : 0
+procedure_set :
+ identifier : 0x16dff1160244729c
+ internal_properties : CAAAAAgAAABGLu41kG7fjQV3iS4F72qmnKaNh5694reolNKIW0iw
+ code_elements :
+  internal_properties : CAAAAAgAAABPOo5wfzL5PtlmH9g6pVlcqG1md+uM4GM8B/k/aVja5R6ZseBzxTGWZbo12UeE8bWym5Rl91AKrNq9wTYnFyamg2lAMw==
+  type_code : 31
+  p_codes :
+   -
+     internal_properties : CAAAAAgAAAChk6Tvu9SdxtGa11gsJzYfEQs+nAZX1wtZEOumeGVJmWvG+JhV8lVxkkk/RmxSO9zB/KhkBnqRRUXMzwC9E+9TupKzJkYbk4WvwalXew0xgaBKMwqvvoUU39f899wMvC+Oyi7E49ksBMrsHUY=
+     code : |1-
+      
+      // CAUTION: 
+      // The source code of the example and/or component must be modified by advanced users only. 
+      // Indeed, uncontrolled modifications may cause loss of data and/or instability problems.
+     type : 720896
+  procedures :
+   -
+     name : ProcessorInfo
+     internal_properties : CAAAAAgAAABv3XMsd6nit0slPYQ6Si8KqwcNLIBU86PM08GaXdb+eDupHN+IVweJvDZ7XkMtyaWFI426OObYeChxj2V++jHVavnTZHr4RDNpAqlpCIHlHh+VQbU6qrTjsIJb/2BJMVWgVdBEgCOK+7TriBzaDWR+ieM9VVLN6gySmxE/lLEFqO/vL00TCSIsRrkgsYffaJD5C/XkjgfXdt0gT23lT5PC5xKQtgiPdXcU7rDQE5KlXjEVbu86Zo2lAvl9JM+gljEPK9e6lWvmZw==
+     procedure_id : 1648301065470571164
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of 'GetSystemInfo':
+      //Parameters:
+      //	sProcessor: String that receives the name of the processor
+      //	dwNbProcessor: String that receives the number of processors
+      //	sProcessorInfo: String that receives additional information about the processor
+      //Return value:
+      //	None
+      PROCEDURE ProcessorInfo( sProcessor , dwNbProcessor , sProcessorInfo )
+      
+      SYSTEM_INFO is composed of
+      	wProcessorArchitecture is 2-byte int
+      	wReserved is 2-byte int
+      	dwPageSize is 4-byte int
+      	lpMinimumApplicationAddress is 4-byte int
+      	lpMaximumApplicationAddress is 4-byte int
+      	dwActiveProcessorMask is 4-byte int
+      	dwNumberOfProcessors is 4-byte int
+      	dwProcessorType is 4-byte int
+      	dwAllocationGranularity is 4-byte int
+      	wProcessorLevel is 2-byte int
+      	wProcessorRevision is 2-byte int
+      END
+      
+      
+      
+      // Ask the system for information
+      API("kernel32","GetSystemInfo",&SYSTEM_INFO)
+      
+      // Retrieve the architecture
+      SWITCH SYSTEM_INFO.wProcessorArchitecture
+      	CASE 0
+      		//	#define PROCESSOR_ARCHITECTURE_INTEL            0
+      		sProcessor = "Intel"
+      	OTHER CASE
+      		//	#define PROCESSOR_ARCHITECTURE_UNKNOWN 0xFFFF
+      		sProcessor = <§@3e396a2938dea34b0000§>
+      END
+      
+      // Define the sub-information and build the string
+      nModel is int on 1 byte = SYSTEM_INFO.wProcessorRevision/256
+      nRevision is 1-byte int = modulo(SYSTEM_INFO.wProcessorRevision,256)
+      sProcessorInfo = <§@3e396a2938dea34b0001§>+SYSTEM_INFO.wProcessorLevel+<§@3e396a2938dea34b0002§>+nModel+" Revision: "+nRevision
+      
+      // Retrieve the number of processors
+      dwNbProcessor = SYSTEM_INFO.dwNumberOfProcessors
+      
+      
+     type : 458752
+   -
+     name : SizePhysicalMemory
+     internal_properties : CAAAAAgAAACQNSRDfiY7WgHLYRroJF8k1xUUnqkrDk3nFt1FxWtYphDHqlbZ0YTUtK1WUI8H+47rB6e3xZCaLiW+ADSiNP+VKSINVHYLSsNlU2W5rq2qrByRKR5Li2g9GdBGYVJdv0ok07q3zCt5e09sv5y99PsOq3W8Vc7147TxKM6JuxRJncqiR/RSPnA52DlutFMRzEuYFOxQRPWQ9PSVaF3ylDjWaawd6g==
+     procedure_id : 1648301065470636700
+     type_code : 15
+     code : |1+
+      // Description of input/output parameters of 'PhysicalMemoryTable':
+      //Parameters:
+      //	None
+      // Return value:
+      // 	unsigned 8-byte integer: size (in bytes) of the physical memory installed on the computer
+      
+      FUNCTION SizePhysicalMemory()
+      
+      MEMORYSTATUS is composed of
+      	dwLength is system int
+      	dwMemoryLoad is system int
+      	dwTotalPhys is 8-byte unsigned int
+      	dwAvailPhys is 8-byte unsigned int
+      	dwTotalPageFile is 8-byte unsigned int
+      	dwAvailPageFile is 8-byte unsigned int
+      	dwTotalVirtual is 8-byte unsigned int
+      	dwAvailVirtual is 8-byte unsigned int
+      	dwAvailExtendedVirtual is 8-byte unsigned int
+      END
+      
+      MEMORYSTATUS.dwLength = Dimension(MEMORYSTATUS)
+      
+      API("kernel32","GlobalMemoryStatusEx",&MEMORYSTATUS)
+      //API("kernel32","GlobalMemoryStatus",&MEMORYSTATUS)
+      
+      RESULT MEMORYSTATUS.dwTotalPhys
+     type : 458752
+   -
+     name : ComputerName
+     internal_properties : CAAAAAgAAAACTaZJlm+to/G47tD2QrWULfjwnyhSgm6SRdaTEkE1Ork9IO8wFYq83OF1PTmB6ZGSZJV02JRp7QZkzSR3dEdjWTF5koNiuFhUHYNcLj7cfPdfMcIE0vDS79fmy1V7JqlbzcJdu6TtPPHND1oouNj7WAd4zcmycdWJ2bjdin76mu98P879+wxi4lLgXHIUoD5/MsPZdgOSEKYeBC8T3sdH9g==
+     procedure_id : 1648301065470702236
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of 'sGetComputerName':
+      //Parameters:
+      //	None
+      //Return value:
+      //	ASCIIZ string: name of the computer (on the network neighborhood)
+      FUNCTION ComputerName()
+      // Read the NetBios name
+      szName is string ASCIIZ on 260 = ""
+      dwSize is 4-byte int = 34
+      
+      IF bNTFamily() AND OSType()<>DetectOS.WIN_NT THEN
+      	// Retrieve the "SAM compatible" name
+      	API("secur32","GetComputerObjectNameA",2,&szName,&dwSize)
+      	// Remove the final $
+      	IF Right(szName,1)="$" THEN szName=szName[[1 TO Length(szName)-1]]
+      	
+      ELSE
+      	// Retrieve the NetBIOS name
+      	API("kernel32","GetComputerNameA",&szName,&dwSize)
+      END
+      
+      RESULT szName
+      
+     type : 458752
+   -
+     name : ComputerNameDNS
+     internal_properties : CAAAAAgAAAAu8ignL8QyfOItwJi0EMvLya575zn8oeoeB70nOwvraRx3InzA9eLvbGygd2SlJ9xvJ3Tw6R3eHD+PYuwfeQ6Jz3PrqnacZS4a6oZwHKzjRApFQeR3p5z5NYDuvSAv7XROlSiZwD+T1aVeWdALhsu+9Tc6hTz35fYHZgRLhdrgGxUEIw74UsonWr1pQuDsx6RfHiLT
+     procedure_id : 1648301065470767772
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of 'ComputerNameDNS':
+      //Parameters:
+      //	None
+      // Return value:
+      // 	string: Name of the computer in the DNS system (Win2000 and WinXP only)
+      
+      PROCEDURE ComputerNameDNS()
+      
+      
+      RESULT NetMachineName()
+      
+      
+      
+      
+      
+      
+     type : 458752
+   -
+     name : USERNAME
+     internal_properties : CAAAAAgAAACnndODR96ZzmEpR3mBfCWHOxZpGpWowNcQoOgjlt+MGh+2btBPN9pbLI5Mo60Ikk6pFqEvd82Fz/icyIiJQBVb9V9md56JvMiDvEKWXCT/xMTSzE2VPd5g2GyeIyE7eqSfkDyPEa2SDpymORi6Fp5gJLBii5PrenFoJKbr9MbmyHboLOX4BdxZnvzpF5Fk0WvxqZYe0ydtfwGRLJWBeK0uCH7obl11kRLyGXMybJ+zk6t4lA==
+     procedure_id : 1648301065470833308
+     type_code : 15
+     code : |1-
+      //Description of input/output parameters of 'sGetUserName':
+      //Parameters:
+      //	None
+      //Return value:
+      //	ASCIIZ string: Login of the user
+      FUNCTION USERNAME()
+      
+      // Read the user name
+      szName is string ASCIIZ on 260 = ""
+      dwSize is 4-byte int = 256
+      
+      IF bNTFamily() AND OSType()<>DetectOS.WIN_NT THEN
+      	// Retrieve the "SAM compatible" name
+      	API("secur32","GetUserNameExA",2,&szName,&dwSize)
+      	// Remove the final $
+      	IF Right(szName,1)="$" THEN szName=szName[[1 TO Length(szName)-1]]
+      ELSE
+      	// Retrieve the name
+      	API("Advapi32","GetUserNameA",&szName,&dwSize)
+      END
+      
+      RESULT szName
+     type : 458752
+   -
+     name : GroupMembership
+     internal_properties : CAAAAAgAAACq3FvNm/eft2xg3Z96UG0j5y7L8sshtoe9acVJ0NaDjmaKTpiCWnHiuequM/jVL26SViUXsxA4sCxcZryEMYyZMUdvMsb747PwkxqYqzs8Y/zCfkNk9qjrElmIyqzbvAdCgMnIfUZks7QRmq/gsm7ikO67nFPiFtggHgsye7wraUmzTXgw7Djru4U8hGqI2Eo/yHBfejQignQtUnmHRTIGGUr6bPXojaeE25ytuPSv698Nw1UrjNiVVFOUY+6wrL02NH5/Yw41BEO9OucsTqLr6plapdvSCcCz/rDKg0m9aBs/+LfOheRgqHX+baCbSYW+xixNhB1VmL7UqOjUNjb7RgX94iVyu6KRmfycMND2YAWZCAUdIZfULCIg6TbylzZOnq5i1kcnznmIT34jrjcO8CLkrYkvHJiAkWxr
+     procedure_id : 1648301065470898844
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of 'sListGroup:
+      //Parameters:
+      //	None
+      //Return value:
+      //	Undefined type: List of the groups to which the user belongs (WinNT, Win2000 and WinXP only)
+      FUNCTION GroupMembership()
+      // Lists the membership groups of the token of current process
+      IF b9xFamily() THEN RESULT ""
+      
+      // Open the process
+      // #define PROCESS_QUERY_INFORMATION (0x0400)  
+      PROCESS_QUERY_INFORMATION is int = 0x400
+      
+      // Get the process ID of CurrentProcess
+      dwProcessId is 4-byte int = API("kernel32","GetCurrentProcessId")
+      
+      // Open the Process in information request
+      hProcess is 4-byte int = API("kernel32","OpenProcess",PROCESS_QUERY_INFORMATION,0,dwProcessId)
+      
+      // Open the process token
+      // #define TOKEN_QUERY             (0x0008)
+      hToken is 4-byte int
+      OKEN_QUERY is 4-byte int = 0x0008
+      bRes is boolean = API("Advapi32","OpenProcessToken",hProcess,OKEN_QUERY,&hToken)
+      
+      // Ask for the size of the group information
+      dwGroupSize is 4-byte int = 0
+      API("Advapi32","GetTokenInformation",hToken,2,Null,0,&dwGroupSize)
+      
+      // Allocate the structure
+      pBuffer is system int = pMalloc(dwGroupSize)
+      
+      // Get the list of groups
+      API("Advapi32","GetTokenInformation",hToken,2,pBuffer,dwGroupSize,&dwGroupSize)
+      
+      // Convert the "raw" buffer into a structure
+      nNbGroups is 4-byte int
+      Transfer(&nNbGroups,pBuffer,4)
+      
+      SID_AND_ATTRIBUTES is Structure
+      	pSID is 4-byte int
+      	dwAttribute is 4-byte int
+      END
+      
+      nAllocSize is int = nNbGroups+1
+      arrGroupInfo is array dynamic = new array of nAllocSize SID_AND_ATTRIBUTES
+      
+      Transfer(&arrGroupInfo,pBuffer+4,nNbGroups*8)
+      
+      // Browse the list of groups
+      sListGroups is string = ""
+      dwGroup is int
+      FOR dwGroup=1 TO nNbGroups
+      	szName is string ASCIIZ on 4096 = ""
+      	szDomain is string ASCIIZ on 4096 = ""
+      	dwNameSize is 4-byte int = 4000
+      	dwDomainSize is 4-byte int = 4000
+      	eUse is 4-byte int = 0
+      	
+      	IF API("Advapi32","LookupAccountSidA",Null,arrGroupInfo[dwGroup]:pSID,&szName,&dwNameSize,&szDomain,&dwDomainSize,&eUse) THEN
+      		IF szDomain<>"" THEN
+      			sListGroups += szDomain+"\"+szName+CR
+      		ELSE
+      			sListGroups += szName+CR
+      		END
+      	END
+      END
+      
+      
+      tabTemp is a  array of strings
+      StringToArray(sListGroups,tabTemp,RC)
+      ArrayDeleteDuplicate(tabTemp)
+      sListGroups = ArrayToString(tabTemp,RC)
+      
+      IF Right(sListGroups,Length(CR))=CR THEN
+      	sListGroups = Left(sListGroups,Length(sListGroups)-Length(CR))	
+      END
+      
+      RESULT sListGroups
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : InfoSysteme
+resources :
+ string_res :
+  identifier : 0x3e396a2938dea34b
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+  strings :
+   -
+     text :
+      en-GB : Unknown
+     index : 0
+   -
+     text :
+      en-GB : "Level: "
+     index : 1
+   -
+     text :
+      en-GB : " Model: "
+     index : 2
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

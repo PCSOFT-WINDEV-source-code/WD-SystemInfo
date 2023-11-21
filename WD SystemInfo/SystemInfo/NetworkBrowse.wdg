@@ -1,0 +1,743 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : NetworkBrowse
+ major_version : 28
+ minor_version : 0
+ type : 7
+ description : ""
+ subtype : 0
+procedure_set :
+ identifier : 0x16dff117026e7655
+ internal_properties : CAAAAAgAAABGLu41kG7fjQV3iS4F72qmnKaNh5694reolNKIW0iw
+ code_elements :
+  internal_properties : CAAAAAgAAAAdC5DaGsntqmfkq1J4p6eipmeEO//QiIdypV0FB6KY+wiPKnW2KoJpaKmeXvb1NGpH4KGGthHXu/V4LqeilI4jnJwO5Q==
+  type_code : 31
+  p_codes :
+   -
+     internal_properties : CAAAAAgAAABZXwal89Yl1WI6H9peJD1xtVgUmGdByszcL1aFD/6/OYFJwD6j8J8uOVikNI+9wcINoGC/1G9OHu224visKEyTZw7AkYZdWNnU8UcmSFQ0Fc4Av8VpWbPfYZ9LfbqqCm+oG2RHBeVR3efCC3ug4WwzJ2S2/rBjRcbTy9/inf46WPJBwQPZO86asahxw+pv7wzMSA==
+     code : |1-
+      // CAUTION: 
+      // The source code of the example and/or component must be modified by advanced users only. 
+      // Indeed, uncontrolled modifications may cause loss of data and/or instability problems.
+      
+      CONSTANT
+      	NETWORK_GENERIC	= 0		// Generic Network Object
+      	NETWORK_GROUP		= 1		// Domain or Work Group
+      	NETWORK__MACHINE		= 2		// Machine (server or computer)
+      	NETWORK_DISK		= 3		// Shared Directory
+      	NETWORK_PRINTER	= 4		// Shared printer
+      	
+      	NETWORK_ROOT		= "--ROOT--"
+      	
+      	ERROR_MORE_DATA = 234
+      	ERROR_SUCCESS   = 0
+      	NERR_SUCCESS    = 0
+      END
+      
+      // Structures returned by the component
+      stUser is Structure
+      	nIdentifier is int
+      	sName         is string	
+      	sFullName  is string
+      END
+      
+      stGroup is Structure
+      	nIdentifier is int
+      	sName         is string	
+      	sComment is string	
+      END
+      
+      stComputer is Structure
+      	nIdentifier is int
+      	sName         is string	
+      	sComment is string	
+      END
+      
+      GLOBAL
+      PRIVATE
+      // Structures for the Netapi32 API
+      NET_DISPLAY_GROUP is Structure
+      	grpi3_name is system int
+      	grpi3_comment is system int
+      	grpi3_group_id is system int
+      	grpi3_attributes is system int
+      	grpi3_next_index is system int
+      END
+      
+      NET_DISPLAY_USER is Structure
+      	usri1_name is system int
+      	usri1_comment is system int
+      	usri1_flags is system int
+      	usri1_full_name is system int
+      	usri1_user_id is system int
+      	usri1_next_index is system int
+      END
+      
+      NET_DISPLAY_MACHINE is Structure
+      	usri2_name is system int
+      	usri2_comment is system int
+      	usri2_flags is system int
+      	usri2_user_id is system int
+      	usri2_next_index is system int
+      END
+      
+      // Handle of current enumeration
+      gtEnumNetwork is 4-byte int = Null
+      gdwScope is 4-byte int
+      gdwType is 4-byte int
+      gdwDisplayType is 4-byte int
+      gdwUsage is 4-byte int
+      gsLocalName is string
+      gsRemoteName is string
+      gsHow is string
+      gsProvider is string
+      
+      // Global string for the enumeration roots
+      gszRemoteName is string ASCIIZ on 4096
+      
+      // Error message
+      gsErrorMsg is string
+     type : 720896
+  procedures :
+   -
+     name : NetworkElementLocalName
+     procedure_id : 1648301069768291925
+     type_code : 15
+     code : |1-
+      //Description of input/output parameters of 'sNetworkObjectLocalName':
+      //Parameters:
+      //	None
+      //Return value:
+      //	ASCIIZ string: returns the local name of the current network element in the enumeration
+      FUNCTION NetworkElementLocalName()
+      
+      RESULT gsLocalName
+     type : 458752
+   -
+     name : NetworkElementRemoteName
+     internal_properties : CAAAAAgAAACYYLKR9vYUprL1tiRcqKvbRZJ7Wf+6qyAuB1fnw69r4Zj7it7+c9CdIPiCm7DR37QXNwC255sU2mMrEFwPSV7p6xdLFBDmX1Cqal+pC53iRYuGxqH2UDUQTNPbirvEUNkrIrFiKwRQUGDVruVmWxYbLri/ArN4fgn6kdmAsMd/tDLhbAeTf+/CMfwujzOBGhbRiJRh
+     procedure_id : 1648301069768357461
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of 'sNetworkObjectRemoteName:
+      //Parameters:
+      //	None
+      //Return value:
+      //	string: returns the remote name (the UNC path for a shared directory for instance) of the current element in the enumeration
+      FUNCTION NetworkElementRemoteName( )
+      
+      RESULT gsRemoteName
+     type : 458752
+   -
+     name : NetworkElementComment
+     procedure_id : 1648301069768422997
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of 'sNetworkObjectComment':
+      //Parameters:
+      //	None
+      //Return value:
+      //	string: returns the comment associated with the current element in the enumeration
+      FUNCTION NetworkElementComment(  )
+      // Retrieves the comment associated with the current object
+      
+      RESULT gsHow
+     type : 458752
+   -
+     name : NetworkElementSupplier
+     internal_properties : CAAAAAgAAABmumR2nIRK5OLtgFg0EAsLie57Z3k8oepeB70n+8tr6Zx34jxA9aKv7Kzgt+SlZ5wvZ3RwKd3eHH8PYmxfOY6JT/OranYcJW6aqubQfAyD5Kql4YQXx7zZFeDOnYAPjZRu9Ug5YF+zNYW+OTBr5uteFZdaJdwXBVbnRmQrZTqAu7Vkw64YcuqHuh1Jopjsh9GT1mob
+     procedure_id : 1648301069768488533
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of 'sNetworkObjectSupplier':
+      //Parameters:
+      //	None
+      //Return value:
+      //	ASCIIZ string: returns the network to which belongs the current element in the enumeration
+      //				  (Microsoft network or Novell network for example)
+      FUNCTION NetworkElementSupplier(  )
+      // Retrieves the name of the network supplier for the current network object
+      
+      RESULT gsProvider
+     type : 458752
+   -
+     name : NetworkElementType
+     internal_properties : CAAAAAgAAACZH0/RArszkkubXvbu4sFRsKlPYv1sPdZ9WSuRytBouFRl1XcwQSb5t/bZHqZ6YJHsOFzdexCYZ4o+QJw7qShT8gHRDLUnmy850GfE7t6bOO2tymrxwaNos1e1pSwvY5qPYwdbKuEyJKtPcLwvbm1wIqO5uSbpAB2Fw+/Zf+xYf0SKnPTY1hdYRLgyHNAqOMwMCA==
+     procedure_id : 1648301069768554069
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of 'nNetworkObjetType':
+      //Parameters:
+      //	None
+      //Return value:
+      //	integer: returns the type of the current element in the enumeration, constant among:
+      //		NetworkBrowse::NETWORK_GENERIC		: Generic Network Object
+      //		NetworkBrowse::NETWORK_GROUP		: Domain or Work group
+      //		NetworkBrowse::NETWORK_MACHINE	: Machine (server or computer)
+      //		NetworkBrowse::NETWORK_DISK		: Shared Directory
+      //		NetworkBrowse::NETWORK_PRINTER		: Shared Printer
+      
+      FUNCTION NetworkElementType()
+      // Returns the type of the current network object
+      
+      SWITCH gdwDisplayType
+      	CASE 0	// RESOURCEDISPLAYTYPE_GENERIC        0x00000000
+      		RESULT NETWORK_GENERIC
+      	CASE 1	// RESOURCEDISPLAYTYPE_DOMAIN         0x00000001
+      		RESULT NETWORK_GROUP
+      	CASE 2	// RESOURCEDISPLAYTYPE_SERVER         0x00000002
+      		RESULT NETWORK__MACHINE
+      	CASE 3	// RESOURCEDISPLAYTYPE_SHARE          0x00000003
+      		SWITCH gdwType
+      			CASE 1	// RESOURCETYPE_DISK     	 0x00000001
+      				RESULT NETWORK_DISK
+      			CASE 2	// RESOURCETYPE_PRINT      	 0x00000002
+      				RESULT NETWORK_PRINTER
+      			OTHER CASE
+      				RESULT NETWORK_GENERIC
+      		END
+      	OTHER CASE		
+      		RESULT NETWORK_GENERIC
+      END
+     type : 458752
+   -
+     name : NetworkElementConnectable
+     procedure_id : 1648301069768619605
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of 'bNetworkObjectConnectable':
+      //Parameters:
+      //	None
+      //Return value:
+      //	boolean: True if the current element in the enumeration is connectable
+      //  The connectable elements are:
+      //  - the shared directories (see the documentation for NetworkConnect)
+      //  - the shared printers (see the documentation for iConfigure)
+      FUNCTION NetworkElementConnectable()
+      // Indicates whether the current network object is connectable (via NetworkConnect)
+      
+      RESULT (BinaryAND(gdwUsage,1)=1)
+     type : 458752
+   -
+     name : NetworkElementEnumerable
+     procedure_id : 1648301069768685141
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of 'bNetworkObjectContainer:
+      //Parameters:
+      //	None
+      //Return value:
+      //	boolean: true if the current object in the enumeration can be used as start point
+      //			 for an enumeration (to start the enumeration, the remote name of the object must be passed
+      //			 to NetworkElementEnumerable, NetworkElementFirst function)
+      FUNCTION bNetworkElementEnumerable()
+      // Indicates whether the current network object is a container
+      
+      RESULT (BinaryAND(gdwUsage,2)=2)
+     type : 458752
+   -
+     name : NetworkElementFirst
+     internal_properties : CAAAAAgAAAAOoAJtQqGsjVq6Hfwoec2sst3HQgx4y+OTzQZ9tSPeZFbwAyjboMgNLUoIYrSEG6hQkqsD+xJ7AuUlmA5434U7jN+wxhFRCmSKGOVUj9N7eyaIFInrxGtX4lG/ThUvNfcMs6Q2yN3EJVitMTeUDe+j8lsvRQRqITVRN/4VEUwUatoBC+0yFmrB6qdVhdOJ+ej7DdRgLnDPXB21Pl7IJ+6FTPfY6YL/wrZp0XzkwzhnuExZRXZyyLPzKpD/7l/Vhy9EwNUyL17sxHF0bRUxaR6rcVqxV1ju2XJvj8fvtgh7F6yyrmfLK3e4vs7EVPlPeo3mixZfm+jsMLsxyN65e33t3KiSKBvJgHj+P9s+xHo1i52ub/zK1T+0pVcV4o3ovpuAMgs714gxhapOCbP9oC/OZijoVfBQkw==
+     procedure_id : 1648301069768750677
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of 'NetworkEnumerate:
+      //Parameters:
+      //	sStart: start point for the enumeration, pass the remote name of a network object (machine name for instance)
+      //  or the NetworkBrowse::NETWORK_ROOT constant to enumerate the root of the network neighborhood)
+      //Return value:
+      //	integer: returns true if the function was successful
+      FUNCTION NetworkElementFirst( sStart = "" )
+      // Enumerates the network object according to the content of gpNetworkObject
+      // Start an enumeration if gpNetworkObject is not allocated or if sStart is not an empty string
+      // To enumerate the root of the network neighborhood, use the NETWORK_ROOT constant
+      nRes is int
+      
+      // The function ends immediately if the current enumeration must be continued while there is no current enumeration
+      IF sStart="" AND gtEnumNetwork=Null THEN RESULT True
+      
+      // The current enumeration must end if a new enumeration is requested while an enumeration is still in progress
+      IF sStart<>"" AND gtEnumNetwork<>Null THEN
+      	// End the current enumeration
+      	API("mpr","WNetCloseEnum",gtEnumNetwork)
+      	gtEnumNetwork = Null
+      END
+      
+      // Open the handle if a new enumeration was requested
+      IF sStart<>"" THEN
+      	dwScope is 4-byte int = 2 		// #define RESOURCE_GLOBALNET      0x00000002
+      	dwType is 4-byte int = 0		// #define RESOURCETYPE_ANY        0x00000000
+      	dwUsage is 4-byte int = 0		// Enumerate all the resources
+      	pNetworkObject is 4-byte int
+      	// GpNetworkObject remains to NULL if the network root was requested
+      	IF sStart=NETWORK_ROOT THEN
+      		pNetworkObject = _pCreateNetworkObject("",True)
+      	ELSE
+      		// Otherwise, build he NETRESOURCE structure
+      		pNetworkObject = _pCreateNetworkObject(sStart,False)
+      	END
+      	// Open the handle
+      	nRes = API("mpr","WNetOpenEnumA",dwScope,dwType,dwUsage,pNetworkObject,&gtEnumNetwork)
+      	// Free the NETRESOURCE structure
+      	Free(pNetworkObject)
+      	// If an error occurs, exit and return the error code
+      	IF nRes<>0 THEN
+      		// Otherwise, build the NETRESOURCE structure with the provider flag
+      		pNetworkObject = _pCreateNetworkObject(sStart,True)
+      		// Open the handle
+      		nRes = API("mpr","WNetOpenEnumA",dwScope,dwType,dwUsage,pNetworkObject,&gtEnumNetwork)
+      		// Free the NETRESOURCE structure
+      		Free(pNetworkObject)
+      		IF nRes<>0 THEN 
+      			RESULT False
+      		END
+      	END
+      END
+      
+      // Enumerate an object
+      dwBufferSize is 4-byte int = 16384
+      pLocalBuffer is 4-byte int = pMalloc(dwBufferSize)
+      dwNbEntry is 4-byte int = 1
+      
+      nRes = API("mpr","WNetEnumResourceA",gtEnumNetwork,&dwNbEntry,pLocalBuffer,&dwBufferSize)
+      // If an error occurs, stop and return the error code
+      IF (nRes<>0) AND (nRes<>259) THEN
+      	RESULT False
+      END
+      
+      // If the enumeration is over
+      IF nRes=259 THEN
+      	// Close the handle
+      	API("mpr","WNetCloseEnum",gtEnumNetwork)
+      	gtEnumNetwork = Null
+      	RESULT True
+      END
+      
+      // Otherwise, extract the characteristics of the object that was successfully enumerated
+      stELEM is composed of
+      	dwScope is 4-byte int
+      	dwType is 4-byte int
+      	dwDisplayType is 4-byte int
+      	dwUsage is 4-byte int
+      	lpLocalName is 4-byte int
+      	lpRemoteName is 4-byte int
+      	lpComment is 4-byte int
+      	lpProvider is 4-byte int
+      END
+      
+      Transfer(&stELEM,pLocalBuffer,Dimension(stELEM))
+      
+      gsLocalName = sGetCString(stELEM.lpLocalName)
+      gsRemoteName = sGetCString(stELEM.lpRemoteName)
+      gsHow = sGetCString(stELEM.lpComment)
+      gsProvider = sGetCString(stELEM.lpProvider)
+      gdwDisplayType = stELEM.dwDisplayType
+      gdwScope = stELEM.dwScope
+      gdwType = stELEM.dwType
+      gdwUsage = stELEM.dwUsage
+      
+      // Free the local buffer
+      Free(pLocalBuffer)
+      
+      RESULT True
+     type : 458752
+   -
+     name : NetworkOut
+     procedure_id : 1648301069768816213
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of 'bNetworkOut:
+      //Parameters:
+      //	None
+      //Return value:
+      //	boolean: true if no enumeration is in progress or if the current enumeration is over
+      PROCEDURE NetworkOut()
+      
+      RESULT (gtEnumNetwork=Null)
+     type : 458752
+   -
+     name : _pCreateNetworkObject
+     internal_properties : CAAAAAgAAABp24r8b3tn/HuBuSlDPqNveVXFFJtCkkHaxgLBWDkmFBVo2dLls/hDhCDwOSXAXoTZ5L9BneUfa5i2VGYJOFEB5U2gVWBdkmCPGnoscPDffrTQ/l/jBcB4nIFNUtD61YeAveOqhDAnxUt3DGvVeR1vNY2hFob+n8TnXWluN4GtF3ext2z3DOVgkeHAfjBrGHIPt0SAfW1/QY+Xyh/D7juoBEkta0JeeCtrCEQPD20zSuE22g==
+     procedure_id : 1648301069768881749
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of '_pCreateNetworkObject:
+      //Parameters:
+      //	sPath: <specify the role of sPath>
+      //	bProvider: <specify the role of bProvider>
+      //Return value:
+      //	integer: <specify the possible values as well as their interpretation>
+      PROCEDURE PRIVATE _pCreateNetworkObject( sPath , bProvider )
+      
+      // Allocate the pointer
+      pObject is 4-byte int = pMalloc(32)
+      dwZero is 4-byte int = 0
+      dwValContainer is 4-byte unsigned int = 2 // #define RESOURCEUSAGE_CONTAINER     0x00000002
+      // Flag used to enumerate the work groups
+      IF bProvider THEN dwValContainer += 0x80000000 // #define RESOURCEUSAGE_RESERVED      0x80000000
+      
+      // Fill the members
+      // pObject->dwScope = 0;
+      Transfer(pObject,&dwZero,4)
+      // pObject->dwType = 0;
+      Transfer(pObject+4,&dwZero,4)
+      // pObject->dwDisplayType = 0;
+      Transfer(pObject+8,&dwZero,4)
+      // pObject->dwUsage = RESOURCEUSAGE_CONTAINER;
+      Transfer(pObject+12,&dwValContainer,4)
+      
+      // pObject->lpLocalName = NULL;
+      Transfer(pObject+16,&dwZero,4)
+      // pObject->lpRemoteName = "Root Path";
+      gszRemoteName = sPath
+      dwAddressSourceString is 4-byte int = &gszRemoteName
+      Transfer(pObject+20,&dwAddressSourceString,4)
+      // pObject->lpComment = NULL;
+      Transfer(pObject+24,&dwZero,4)
+      // pObject->lpProvider = NULL;
+      IF bProvider THEN 
+      	Transfer(pObject+28,&dwAddressSourceString,4)
+      ELSE
+      	Transfer(pObject+28,&dwZero,4)
+      END
+      
+      RESULT pObject
+     type : 458752
+   -
+     name : NetworkElementNext
+     procedure_id : 1648301069768947285
+     type_code : 15
+     code : |1-
+      //Description of input/output parameters of 'NetworkEnumerate:
+      //Parameters:
+      //	None
+      //Return value:
+      //	integer: returns true if the function was successful
+      PROCEDURE NetworkElementNext()
+      
+      RESULT NetworkElementFirst("")
+     type : 458752
+   -
+     name : NetworkListUser
+     internal_properties : CAAAAAgAAAAFFl7/N8DrQ5u4hC1DoeHFzRdBk6Y8R39K4MOspy6nc732hCaqG7IBo2V1cVEHFHAXszSACQkuvIkt6HG7zK+YMOrDYh2RZ4qxiOFjOXW9RhT6YANs6/yQgeP5sZdFTgDk0ASGzfdbTUhYrfteAWewhgMy1sS66L86x3nPjXECU601VpbKcRjN6+SJlVQZCpLPQVEoXWfKOrzrcLRLZvzVdPq03igYWkg9yYr1zNDzfc9hwtrRWEBL08hn2f/P/v/1+TF0ZCyYlNa0xDufkuO1fCEe3QodMocxJl4wFLPKlQnsFbosg+lE3eCioQKmHSBFxUY11UgW6+gIJskqC3jhvsALmboh
+     procedure_id : 1648301069769012821
+     type_code : 15
+     code : |1+
+      // Summary: List of users (domain or local)
+      // Syntax:
+      //[ <Result> = ] NetworkListUser ([<sDomain> [, <sGroup>]])
+      //
+      // Parameters:
+      //	sDomain (default value=0): Domain (local search if Null)
+      //	sGroup (default value=0): Group whose users must be found
+      // Return value:
+      // 	Undefined type: // Array of dynamic stUser
+      //
+      // Example:
+      //
+      PROCEDURE NetworkListUser(sDomain=Null,sGroup=Null)
+      
+      // Variables
+      nResult   is int
+      pBuffer     is system int
+      nIndex      is int = 0
+      nRecord      is int = 0
+      nNbRec      is int = 0
+      nTotalNbRec is int = 0
+      struct      is NET_DISPLAY_USER
+      sPtrUnicode is system int
+      aaList     is array of stUser dynamic
+      pstUser     is stUser dynamic = Null
+      
+      // Check the parameter
+      IF sDomain <> Null THEN
+      	IF NOT sDomain [= "\\" THEN
+      		sDomain = "\\"+sDomain	
+      	END
+      END
+      
+      // Users of a specific group?
+      IF sGroup <> Null THEN
+      	// List of users for the group passed in parameter for the domain passed in parameter
+      	nResult = API("Netapi32.dll","NetGroupGetUsers",sDomain = Null ? Null ELSE AnsiToUnicode(sDomain), AnsiToUnicode(sGroup), 0, &pBuffer, -1, &nNbRec, &nTotalNbRec, Null)
+      	
+      	IF nResult = NERR_SUCCESS THEN
+      		IF nNbRec > 0 THEN
+      			// Initialize the counter
+      			nRecord=0
+      			
+      			// Retrieve the first structure of the buffer
+      			Transfer(&sPtrUnicode,pBuffer,Dimension(sPtrUnicode))
+      			
+      			// Browse the buffer
+      			WHILE nNbRec > 0
+      				// New user
+      				pstUser = new stUser
+      				
+      				// Add some information
+      				pstUser.sName = StringRetrieve(sPtrUnicode,srUNICODEAddress)
+      				Add(aaList,pstUser)
+      				
+      				// Next structure
+      				nRecord++
+      				Transfer(&sPtrUnicode,pBuffer+(nRecord*Dimension(sPtrUnicode)),Dimension(sPtrUnicode))
+      				
+      				nNbRec--
+      			END
+      			
+      			// Free the buffer
+      			API("Netapi32.dll","NetApiBufferFree",pBuffer)
+      		END			   
+      	END
+      	// Otherwise, all the users of the domain
+      ELSE
+      	LOOP
+      		// Find all the users of the domain
+      		nResult = API("Netapi32.dll","NetQueryDisplayInformation",sDomain = Null ? Null ELSE AnsiToUnicode(sDomain), 1, nIndex, 100, -1, &nNbRec, &pBuffer)
+      		
+      		// Search OK?
+      		IF (nResult=ERROR_SUCCESS) OR (nResult=ERROR_MORE_DATA) THEN 
+      			IF nNbRec > 0 THEN
+      				// Initialize the counter
+      				nRecord=0
+      				
+      				// Retrieve the first structure of the buffer
+      				Transfer(&struct,pBuffer,Dimension(struct))
+      				
+      				// Browse the buffer
+      				WHILE nNbRec > 0
+      					// New user
+      					pstUser = new stUser
+      					
+      					// Add some information
+      					pstUser.sName = StringRetrieve(struct.usri1_name,srUNICODEAddress)
+      					pstUser.nIdentifier = struct.usri1_user_id
+      					pstUser.sFullName = StringRetrieve(struct.usri1_full_name,srUNICODEAddress)
+      					
+      					Add(aaList,pstUser)
+      					
+      					// Increment the index
+      					nIndex = struct.usri1_next_index
+      					
+      					// Next structure
+      					nRecord++
+      					Transfer(&struct,pBuffer+(nRecord*Dimension(struct)),Dimension(struct))
+      					
+      					nNbRec--
+      				END
+      				
+      				// Free the buffer
+      				API("Netapi32.dll","NetApiBufferFree",pBuffer)
+      			END
+      		END
+      	TO DO WHILE nResult=ERROR_MORE_DATA
+      END
+      
+      RESULT aaList
+      
+      CASE Error:
+      gsErrorMsg = "Unable to retrieve the list of users"+CR+"Check whether you have the appropriate rights"
+      RESULT Null
+      CASE EXCEPTION:
+      gsErrorMsg = "Unable to retrieve the list of users"+CR+"Check whether you have the appropriate rights"
+      RESULT Null
+     type : 458752
+   -
+     name : NetworkListGroup
+     internal_properties : CAAAAAgAAADb6rs7ubM5EF5rz6uCyF2BbAMMA0F3alMeBQ6aDaW4Qs5tFZ0UBSzwpOduV8PRX0bfVq93jA2Vfjm6i4YZFB7k4qW6p4/P8rL0yhdycBaO28UDsXQIwkRWU9L1vRjfuZTUM8Jilz7Ae7MmUW436xGsqfguW+XoDStW10FYQM0x2009K8HFEFkdO3TpTSxVrPCvTaPR4Kp5i4Tkz3jHYstfI2xT6w9anTE2qvvEwUy52V8/hu2kPw==
+     procedure_id : 1648301069769078357
+     type_code : 15
+     code : |1+
+      // Summary: List of local groups or groups of the specified domain
+      // Syntax:
+      //[ <Result> = ] NetworkListGroup ([<sDomain>])
+      //
+      // Parameters:
+      //	sDomain (default value=0): Address of the domain
+      // Return value:
+      // 	Undefined type: // Array of dynamic stGroup
+      //
+      // Example:
+      // Indicate an example.
+      //
+      PROCEDURE NetworkListGroup(sDomain=Null)
+      
+      // Variables
+      nResult   is int
+      pBuff     is system int
+      nRecNum  is int = 0
+      nCounter is int = 0
+      nNbRec    is int = 0
+      struct    is NET_DISPLAY_GROUP
+      aaList   is array stGroup dynamic
+      tmpGroup is stGroup dynamic
+      
+      // Check the parameter
+      IF sDomain <> Null THEN
+      	IF NOT sDomain [= "\\" THEN
+      		sDomain = "\\" + sDomain	
+      	END
+      END
+      
+      LOOP
+      	// Lists the groups of the domain
+      	nResult = API("Netapi32.dll","NetQueryDisplayInformation",sDomain = Null ? Null ELSE AnsiToUnicode(sDomain), 3, nRecNum, 100, -1, &nNbRec, &pBuff)
+      	
+      	IF((nResult=ERROR_SUCCESS) OR (nResult=ERROR_MORE_DATA)) THEN
+      		// Are results found?
+      		IF nNbRec > 0 THEN
+      			// Initialize and retrieve the first result
+      			nCounter=0;
+      			Transfer(&struct,pBuff,Dimension(struct))
+      			
+      			WHILE nNbRec > 0
+      				// Retrieve the information
+      				tmpGroup = new stGroup
+      				
+      				tmpGroup.sName = StringRetrieve(struct.grpi3_name,srUNICODEAddress)
+      				tmpGroup.nIdentifier = struct.grpi3_group_id
+      				tmpGroup.sComment = StringRetrieve(struct.grpi3_comment,srUNICODEAddress)
+      				
+      				Add(aaList,tmpGroup)
+      				
+      				// Next index
+      				nRecNum = struct.grpi3_next_index
+      				
+      				// Next structure
+      				nCounter++
+      				Transfer(&struct,pBuff+(nCounter*Dimension(struct)),Dimension(struct))
+      				
+      				nNbRec--
+      			END
+      			
+      			// Free the buffer
+      			API("Netapi32.dll","NetApiBufferFree",pBuff)
+      		END
+      	END
+      TO DO WHILE (nResult=ERROR_MORE_DATA)
+      
+      RESULT aaList
+      
+      CASE Error:
+      gsErrorMsg = "Unable to retrieve the list of groups"+CR+"Check whether you have the appropriate rights"
+      RESULT Null
+      CASE EXCEPTION:
+      gsErrorMsg = "Unable to retrieve the list of groups"+CR+"Check whether you have the appropriate rights"
+      RESULT Null
+     type : 458752
+   -
+     name : NetworkListComputer
+     internal_properties : CAAAAAgAAAAlJOVZ0151UBShVy8+Nuk9cnEqPSUNRnNc61aiFb+UxiwL485cJbTQbN8mJ5upt85P3s8vzMUFxgnam55JhA50mmUCd0efOjLcEq+yuK4WwxUboUwIulQeI1I14fzDJUjoz+6eY7qk3ycSfZJ7ny0AnYQqV+EUEa8qo+2cFMHtX5H5Zy1hjP2xjwD1UbDZCESTSS4eXevCws29mAfwdzLItE3OGBQzdoivW7wXZo30moHZKEtaQQ==
+     procedure_id : 1648301069769143893
+     type_code : 15
+     code : |1+
+      // Summary: Lists the computers of a domain (or locally)
+      // Syntax:
+      //[ <Result> = ] NetworkListComputer ([<sDomain>])
+      //
+      // Parameters:
+      //	sDomain (default value=0): Name of the domain
+      // Return value:
+      // 	Undefined type: // Array of dynamic stComputer
+      //
+      // Example:
+      //
+      PROCEDURE NetworkListComputer(sDomain=Null)
+      
+      // Variables
+      nResult    is int
+      pBuff      is system int
+      nRecNum   is int = 0
+      nCounter  is int = 0
+      nNbRec     is int = 0
+      struct     is NET_DISPLAY_MACHINE
+      aaList    is array stComputer dynamic
+      tmpComputer is stComputer dynamic
+      
+      // Check the parameter
+      IF sDomain <> Null THEN
+      	IF NOT sDomain [= "\\" THEN
+      		sDomain = "\\" + sDomain
+      	END
+      END
+      
+      LOOP
+      	// Find computers on the domain
+      	nResult = API("Netapi32.dll","NetQueryDisplayInformation",sDomain = Null ? Null ELSE AnsiToUnicode(sDomain), 2, nRecNum, 100, -1, &nNbRec, &pBuff)
+      	
+      	IF((nResult=ERROR_SUCCESS) OR (nResult=ERROR_MORE_DATA)) THEN
+      		// Are results found?
+      		IF nNbRec > 0 THEN
+      			
+      			// Retrieve the first structure
+      			nCounter=0
+      			Transfer(&struct,pBuff,Dimension(struct))
+      			
+      			WHILE nNbRec > 0		
+      				// Retrieve the information
+      				tmpComputer = new stComputer
+      				tmpComputer.nIdentifier = struct.usri2_user_id
+      				tmpComputer.sComment = StringRetrieve(struct.usri2_comment,srUNICODEAddress)
+      				tmpComputer.sName = StringRetrieve(struct.usri2_name,srUNICODEAddress)
+      				
+      				Add(aaList,tmpComputer)
+      				
+      				// Next index
+      				nRecNum = struct.usri2_next_index
+      				nCounter++
+      				
+      				// Next structure
+      				Transfer(&struct,pBuff+(nCounter*Dimension(struct)),Dimension(struct))
+      				
+      				nNbRec--
+      			END
+      			
+      			// Free the buffer
+      			API("Netapi32.dll","NetApiBufferFree",pBuff)
+      		END
+      	END
+      TO DO WHILE nResult=ERROR_MORE_DATA
+      
+      RESULT aaList
+      
+      CASE Error:
+      gsErrorMsg = "Unable to retrieve the list of computers"+CR+"Check whether you have the appropriate rights"
+      RESULT Null
+      CASE EXCEPTION:
+      gsErrorMsg = "Unable to retrieve the list of computers"+CR+"Check whether you have the appropriate rights"
+      RESULT Null
+     type : 458752
+   -
+     name : NetworkError
+     internal_properties : CAAAAAgAAADA4iRlJPfTT93c1EbZPFe7NiwpiiiLv8uDoJ79kZ2I1Doto0b4F7dxmR1f9rcOHMbTvKLZPd7RxUTAs9RjUOiiEdE38V6TeJdfLh9Tv1IuwDBgz/F6ycsbBqcIaZpFJqBvc4sf5d7Xv2xD5GxpZ8uLdRYbqBdgbsRq04hZemxVEbwzzBKUO63X1jdHUq9xZOv4YZBN5Q==
+     procedure_id : 1648301069769209429
+     type_code : 15
+     code : |1+
+      // Summary: Returns the last error message
+      // Syntax:
+      //[ <Result> = ] NetworkError()
+      //
+      // Parameters:
+      //	None
+      // Return value:
+      // 	string: // Error message
+      //
+      // Example:
+      // Indicate an example.
+      //
+      PROCEDURE NetworkError()
+      
+      RESULT gsErrorMsg
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : ParcoursReseau
+resources :
+ string_res :
+  identifier : 0x3e3a403b44f7a013
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

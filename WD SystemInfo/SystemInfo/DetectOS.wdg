@@ -1,0 +1,147 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : DetectOS
+ major_version : 28
+ minor_version : 0
+ type : 7
+ description : ""
+ subtype : 0
+procedure_set :
+ identifier : 0x16dff11602357115
+ internal_properties : CAAAAAgAAABGLu41kG7fjQV3iS4F72qmnKaNh5694reolNKIW0iw
+ code_elements :
+  internal_properties : CAAAAAgAAABPOo5wfzL5PtlmH9g6pVlcqG1md+uM4GM8B/k/aVja5R6ZseBzxTGWZbo12UeE8bWym5Rl91AKrNq9wTYnFyamg2lAMw==
+  type_code : 31
+  p_codes :
+   -
+     internal_properties : CAAAAAgAAACxg1Tfq6RBBpEaVxiEDw5fGWvu3BZ3BzOhmJOeGLXpMSv+oACNKj0RUpmPhhQq45yp3FgEJgp1qXHgy/yxj3vXvra32qrHVzkbdeUTH2ldpaT+Z24D2okIy8uYMzDYWENC3kLI50mc9PrcDVY=
+     code : |1+
+      CONSTANT
+      	WIN_95 = 1
+      	WIN_98 = 2
+      	WIN_ME = 3
+      	WIN_NT = 4
+      	WIN_2K = 5
+      	WIN_XP = 6
+      	WIN_2003 = 7
+      	WIN_VISTA = 8
+      	WIN_2008 = 9
+      	WIN_2012 = 10
+      	WIN_7 = 11
+      	WIN_8 = 12
+      	WIN_10 = 13
+      END
+      
+      GLOBAL
+      	gbNTFamily is boolean = (SysWindowsVersion(sysVersionPlatform)="NT")
+      	gb9xfamily is boolean = NOT gbNTFamily
+      	
+      	gnOSLevel is int
+      	
+      SWITCH SysWindowsVersion()
+      	CASE "95"
+      		gnOSLevel = WIN_95
+      	CASE "98"
+      		gnOSLevel = WIN_98
+      	CASE "NT 4"
+      		gnOSLevel = WIN_NT
+      	CASE "NT 5"
+      		gnOSLevel = WIN_2K
+      	CASE "ME"
+      		gnOSLevel = WIN_ME
+      	CASE "XP"
+      		gnOSLevel = WIN_XP
+      	CASE "VISTA"
+      		gnOSLevel = WIN_VISTA
+      	CASE "2003S"
+      		gnOSLevel = WIN_2003
+      	CASE "2008S"
+      		gnOSLevel = WIN_2008
+      	CASE "7"
+      		gnOSLevel = WIN_7
+      	CASE "2012S"
+      		gnOSLevel = WIN_2012
+      	CASE "8"
+      		gnOSLevel = WIN_8
+      	CASE "10"
+      		gnOSLevel = WIN_10
+      	OTHER CASE
+      END
+      
+      
+      // CAUTION: 
+      // The source code of the example and/or component must be modified by advanced users only. 
+      // Indeed, uncontrolled modifications may cause loss of data and/or instability problems.
+      
+      
+      
+     type : 720896
+  procedures :
+   -
+     name : OSType
+     procedure_id : 1648301065469587733
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of 'nOSLevel:
+      //Parameters:
+      //	None
+      //Return value:
+      //	integer: Operating system, constant among
+      //		DetectOS::WIN_95
+      //		DetectOS::WIN_98
+      //		DetectOS::WIN_ME
+      //		DetectOS::WIN_NT
+      //		DetectOS::WIN_2K
+      //		DetectOS::WIN_XP
+      
+      FUNCTION OSType()
+      
+      RESULT gnOSLevel
+      
+     type : 458752
+   -
+     name : bNTFamily
+     internal_properties : CAAAAAgAAAAu8ignL+TyvOLtgFg0EAsLie57Z3k8oepeB70n+8tr6Zx34jxA9aKv7Kzgt+SlZ5wvZ3RwKd3eHH8PYmxfOY6JT/OranYcJW6aqmZQ/IwDZColYQSXRzxZlWBOHQCPDRTudci54N8ztQU+ubDrZmvelRfapVyXhdZnxuSr5boAOzXkQy6Y8moHOp3JIkBMx6RfHiLT
+     procedure_id : 1648301065469653269
+     type_code : 15
+     code : |1-
+      //Description of input/output parameters of 'bNTFamily':
+      //Parameters:
+      //	None
+      //Return value:
+      //	boolean: True if the operating system is WinNT, Win2K or WinXP
+      FUNCTION bNTFamily()
+      
+      RESULT gbNTFamily
+     type : 458752
+   -
+     name : b9xFamily
+     internal_properties : CAAAAAgAAABwSG4As2YkdvI1dlSs2BsL9VLruR/6a6D+98dn40+rgfjrim5u42Bt4PiCa+Ahj4THdxCWxxuU2jOb4HyPSR6JK2fLRCA2D4BqaldR0+UKXSMOrnnuqJ04lDuz8kNM2LEDClkaIxxYGEi9po3Ow56TpmDnWsvw5vGC+TFo+E8HDGqpVH9rV9cq+eSmF3sJQgOl4HwJ
+     procedure_id : 1648301065469718805
+     type_code : 15
+     code : |1+
+      //Description of input/output parameters of 'b9xFamily':
+      //Parameters:
+      //	None
+      //Return value:
+      //	boolean: True if the operating system is Win95, Win98 or WinMe
+      FUNCTION b9xFamily()
+      
+      RESULT gb9xfamily
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : DetecteOS
+resources :
+ string_res :
+  identifier : 0x3e38fcd24ced8af0
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+  strings :
+   -
+     text : {}
+     index : 0
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ

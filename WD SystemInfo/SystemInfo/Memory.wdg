@@ -1,0 +1,97 @@
+#To edit and compare internal_properties, use WINDEV integrated tools.
+#Internal properties refer to the properties of controls in windows, reports, etc.
+info :
+ name : Memory
+ major_version : 28
+ minor_version : 0
+ type : 7
+ description : ""
+ subtype : 0
+procedure_set :
+ identifier : 0x16dff11702567432
+ internal_properties : CAAAAAgAAABGLu41kG7fjQV3iS4F72qmnKaNh5694reolNKIW0iw
+ code_elements :
+  internal_properties : CAAAAAgAAAAdC5DaGsntqmfkq1J4p6eipmeEO//QiIdypV0FB6KY+wiPKnW2KoJpaKmeXvb1NGpH4KGGthHXu/V4LqeilI4jnJwO5Q==
+  type_code : 31
+  p_codes :
+   -
+     internal_properties : CAAAAAgAAAA+IT+C8XaQrdz+SN7BN/L3sB2t6/I+46IWHozljVIMjT7YB5qiAh40o21dJxpIAsuVkqBLjPuMygwxcztzpnwjoqQk1TkVDzcUKEfZxpM0I/U9m7zD4yecamh3+CIH5F9TUDRYWytlgno1F7D8eJwh4lUO5z55WZF0Ovkd66s6e4qjjBh9a1XqZLnLivlFk+t6
+     code : |1+
+      // CAUTION: 
+      // The source code of the example and/or component must be modified by advanced users only. 
+      // Indeed, uncontrolled modifications may cause loss of data and/or instability problems.
+      
+      
+      CONSTANT
+      	HEAP_ZERO_MEMORY = 0x00000008      
+      END
+      
+      GLOBAL
+      // Global variable containing a handle on the current process
+      gtProcessHeap is 4-byte int = API("kernel32","GetProcessHeap")
+      
+      
+     type : 720896
+   -
+     code : |1-
+      
+     type : 720898
+  procedures :
+   -
+     name : pMalloc
+     internal_properties : CAAAAAgAAAAhBNuqmi9L1TYe5m2NnzNQe+88sdvJth3jFT2hDftQ9KCn8J3Y5OKUE+NQ0BZgEE294QSE5eyW5D7gTWVwqSRuZsUTZYA28CLcFlMXCo2sxnELsnL5sfMQS7Ona+qBEbRl+fPvjI8UEiXXlg7bgldeNEP79/Avmp+D+fUThQbFlau8pqaK2rNopLYRgJM4v3W42GRjs7FaJOpmSPmq0B1N1BA=
+     procedure_id : 1648301069766718514
+     type_code : 15
+     code : |1+
+      PROCEDURE pMalloc( nByte )
+      // Allocates nByte bytes in the current process and returns the pointer
+      // The memory zone is initialized with 0
+      // Returns NULL if the allocation fails
+      
+      RESULT API("kernel32","HeapAlloc",gtProcessHeap,HEAP_ZERO_MEMORY,nByte+16)
+     type : 458752
+   -
+     name : Free
+     internal_properties : CAAAAAgAAAAcwWoB+oBzezP4dOQseyvNNz0wVTYtnJYrmaq71Jupkulljzp3laI9FoMdJJDc8j/GezjCfhQ1jpiRLMKcKQwqSCtk5F52mY09HSEccoRyrRSDHu2zrvIjyfkfamDMm0u8addGeDYZ10F7KjXn+b2Bn2+B6jIKm0A36+dQ2YNrYA44HDW4Uy57/IRvt1Gr1xH2l+8xJunWtidDW3lvwBihi9Nf
+     procedure_id : 1648301069766784050
+     type_code : 15
+     code : |1+
+      PROCEDURE Free( pBuffer is int)
+      // Frees a buffer allocated by pMalloc
+      
+      API("kernel32","HeapFree",gtProcessHeap,0,pBuffer)
+      pBuffer = Null
+     type : 458752
+   -
+     name : sGetCString
+     internal_properties : CAAAAAgAAABhXxGmbjYEvF3JRHuDiZbui4KgCHfg+Vv7GRy/l0vvWYO7uHn/U8ENa398yoXf5nN7f1zUI4VIdXCjmvEefaKUmfTh6lTEQJm66rJ2ud+C10uh2q/odPz4FGujtxpB0exlu8uH+BPget0nWIy16Gl85pFLp0JVZIkZIZdpyWIfRspvjT/dh1bJJzeMDW48/49Nt7AnD2Vm7NieBM00SF08y+DT6jPq+F0/B9ugDQXCtFzo
+     procedure_id : 1648301069766849586
+     type_code : 15
+     code : |1+
+      PROCEDURE sGetCString( pString is int)
+      
+      //pString is an integer: it's the address of the string
+      
+      // Retrieves the WLanguage string corresponding to a C string whose address is received in parameter
+      
+      // Read the length of the string
+      nStringSize is int = API("kernel32","lstrlenA",pString)
+      // "Allocate" a WL string (one extra character as the API adds a final zero)
+      sString is string ASCIIZ on 4096
+      // Copy the content of the C string
+      API("kernel32","lstrcpynA",&sString,pString,nStringSize+1)
+      
+      RESULT sString
+      
+     type : 458752
+  procedure_templates : []
+  property_templates : []
+ code_parameters :
+  internal_properties : CAAAAAgAAACVGQgYbalU7DKC3oH4ItDrjtcTHXXV/EuH8q0IbhyQlw==
+  original_name : Memoire
+resources :
+ string_res :
+  identifier : 0x3e3a3de558538055
+  internal_properties : CAAAAAgAAACm76HWfKGWp33VjXInA4cRlqArlgTTA862QGt72W2ld5Y=
+custom_note :
+ internal_properties : CAAAAAgAAABtB9HWVzrXO2+4NDRVK0vmzaNKrCKqH1DBX30lMmGZ
